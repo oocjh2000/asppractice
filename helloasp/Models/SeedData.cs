@@ -5,23 +5,28 @@ using System.Linq;
 
 namespace helloasp.Models
 {
-    public class SeedData
+    public static class SeedData
     {
         public static void Initialize(IServiceProvider serviceProvider)
         {
             using (var context = new helloaspContext(
-                serviceProvider.GetRequiredService<DbContextOptions<helloaspContext>>()
-                ))
+                serviceProvider.GetRequiredService<
+                    DbContextOptions<helloaspContext>>()))
             {
-                if (context.Movie.Any()) return;
+                // Look for any movies.
+                if (context.Movie.Any())
+                {
+                   return;   // DB has been seeded
+                }
+
                 context.Movie.AddRange(
-                     new Movie
-                     {
-                         Title = "광무의 은밀한 생활",
-                         ReleaseDate = DateTime.Parse("1989-2-12"),
-                         Genre = "Romantic Comedy",
-                         Price = 7.99M
-                     },
+                    new Movie
+                    {
+                        Title = "광무의 은밀한 생활 1",
+                        ReleaseDate = DateTime.Parse("1989-2-12"),
+                        Genre = "Romantic Comedy",
+                        Price = 7.99M
+                    },
 
                     new Movie
                     {
@@ -46,9 +51,10 @@ namespace helloasp.Models
                         Genre = "Western",
                         Price = 3.99M
                     }
-                    );
+                );
                 context.SaveChanges();
             }
         }
     }
 }
+

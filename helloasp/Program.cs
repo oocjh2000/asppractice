@@ -12,25 +12,26 @@ namespace helloasp
     {
         public static void Main(string[] args)
         {
-            var host = CreateWebHostBuilder(args).Build();
+              var host = CreateWebHostBuilder(args).Build();
 
-            using(var scope = host.Services.CreateScope())
+            using (var scope = host.Services.CreateScope())
             {
                 var services = scope.ServiceProvider;
+
                 try
                 {
-                     services
-                        .GetRequiredService<helloaspContext>()
-                        .Database.Migrate();
-                    
-                }catch(Exception ex)
-                {
-                    services
-                        .GetRequiredService<ILogger<Program>>()
-                        .LogError(ex, "An error occurred seeding the DB.");
+                    var context=services.
+                        GetRequiredService<helloaspContext>();
+                    context.Database.Migrate();
+                    SeedData.Initialize(services);
                 }
-                host.Run();
+                catch (Exception ex)
+                {
+                    var logger = services.GetRequiredService<ILogger<Program>>();
+                    logger.LogError(ex, "An error occurred seeding the DB.");
+                }
             }
+            host.Run();
         }
 
         public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
